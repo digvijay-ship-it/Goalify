@@ -1,25 +1,40 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  mode: 'development',
+  mode: "development",
   entry: {
-    index:'./src/index.js'
-},
-  devtool: 'inline-source-map',
+    index: "./src/index.js",
+  },
+  devtool: "inline-source-map",
   devServer: {
-    static: './dist',
+    static: "./dist",
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Goalify',
+      module: {
+        rules: [
+          {
+            test: /\.css$/i,
+            use: ["style-loader", "css-loader"],
+          },
+        ],
+      },
+      title: "Goalify",
     }),
   ],
-  
+
   output: {
-    filename: '[name].main.js',
-    path: path.resolve(__dirname, 'dist'),
+    filename: "[name].main.js",
+    path: path.resolve(__dirname, "dist"),
     clean: true,
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+    ],
   },
 };
