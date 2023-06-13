@@ -1,7 +1,12 @@
 import "./sidebar.css";
-import { elementMaker } from "../commonUtilities.js";
+import {
+  elementMaker,
+  priorityTagsFunc,
+  projectFunctions,
+  simpleSvgMaker,
+} from "../commonUtilities.js";
 
-export default function makeSidebar() {
+function makeSidebar() {
   function myDayContainer() {
     const myDayContainer = elementMaker("div", "myDayContainer");
     const myDay = elementMaker("p");
@@ -26,26 +31,18 @@ export default function makeSidebar() {
     return sevenDayContainer;
   }
   function allMyTaskContainer() {
-    const allTaskContainer = elementMaker("div", "sevenDayContainer");
+    const defaultTask = elementMaker("div", "To-Do");
     const allTask = elementMaker("p");
-    allTask.innerText = "All my tasks";
+    allTask.innerText = "To Do";
 
     const allTaskIcon = simpleSvgMaker(
       '<title>format-list-checks</title><path d="M3,5H9V11H3V5M5,7V9H7V7H5M11,7H21V9H11V7M11,15H21V17H11V15M5,20L1.5,16.5L2.91,15.09L5,17.17L9.59,12.59L11,14L5,20Z" />'
     );
-    allTaskContainer.append(allTaskIcon, allTask);
-    return allTaskContainer;
-  }
-
-  function simpleSvgMaker(svgInternal) {
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", "0 0 24 24");
-    svg.innerHTML = svgInternal;
-    return svg;
+    defaultTask.append(allTaskIcon, allTask);
+    return defaultTask;
   }
 
   const sideBar = elementMaker("div", "sidebar");
-  // now insert complete side bar in it
 
   const sideBarHeader = elementMaker("h1", "sideBarHeader");
   sideBarHeader.innerText = "Hello User";
@@ -59,7 +56,7 @@ export default function makeSidebar() {
   const next7Days = sevenDayContainer();
 
   const allMyTask = allMyTaskContainer();
-  sideBarMainDaysList.append(myDay, next7Days, allMyTask);
+  sideBarMainDaysList.append(allMyTask, myDay, next7Days);
 
   const myProjects = elementMaker("div", "myProjects");
   const myProjectTitle = elementMaker("div");
@@ -68,18 +65,39 @@ export default function makeSidebar() {
   const addProjectIcon = simpleSvgMaker(
     '<title>plus</title><path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />'
   );
+  addProjectIcon.classList.add("addProjectIcon");
 
   myProjects.append(myProjectTitle, addProjectIcon);
 
-  // Create sideBarMainProjectList and append it to sideBarMain
+  sideBarMain.append(sideBarMainDaysList, myProjects);
+
+  sideBar.append(sideBarHeader, sideBarMain);
+  document.querySelector("body").appendChild(sideBar);
+  fillSideBarMainProjectListContainer(
+    projectFunctions.returnLatestProjectList()
+  );
+}
+
+function fillSideBarMainProjectListContainer(projectList = []) {
+  const removeThisElementIfExist = document.querySelector(
+    ".sideBarMainProjectListContainer"
+  );
+  if (removeThisElementIfExist) {
+    removeThisElementIfExist.remove();
+  }
   const sideBarMainProjectList = elementMaker(
     "ol",
     "sideBarMainProjectListContainer"
   );
-
-  sideBarMainProjectList.append();
-  sideBarMain.append(sideBarMainDaysList, myProjects, sideBarMainProjectList);
-
-  sideBar.append(sideBarHeader, sideBarMain);
-  document.querySelector("body").appendChild(sideBar);
+  if (projectList) {
+    for (const projectName in projectList) {
+      const element = elementMaker("div", `${projectName}`);
+      element.classList.add("project");
+      element.innerText = `${projectName}`;
+      sideBarMainProjectList.append(element);
+    }
+  }
+  document.querySelector(".sideBarMain").append(sideBarMainProjectList);
 }
+
+export { makeSidebar, fillSideBarMainProjectListContainer, simpleSvgMaker };
