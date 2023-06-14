@@ -29,16 +29,43 @@ function priorityTags() {
 
 function projectList() {
   const projectList = { default: [] };
-  const appendNewProject = (newProjectName) =>
-    (projectList[newProjectName] = []);
+  const completedProjectList = { default: [] };
+
+  const appendNewProject = (newProjectName) => {
+    projectList[newProjectName] = [];
+    completedProjectList[newProjectName] = [];
+  };
   const returnLatestProjectList = () => projectList;
   const appendNewObj = (projectName, taskObj) => {
     projectList[projectName].push(taskObj);
+  };
+
+  const returnLatestCompletedProjectList = () => completedProjectList;
+  const appendFromProjectListToCompleteProjectList = (
+    projectName,
+    taskIndex
+  ) => {
+    // because splice return arr of removed element instead of plain element
+    // we have use index here to take removed element as element instead of arr[removeElement]
+    completedProjectList[projectName].push(
+      projectList[projectName].splice(taskIndex, 1)[0]
+    );
+  };
+  const appendFromCompleteProjectListToProjectList = (
+    projectName,
+    taskIndex
+  ) => {
+    projectList[projectName].push(
+      completedProjectList[projectName].splice(taskIndex, 1)[0]
+    );
   };
   return {
     appendNewProject,
     returnLatestProjectList,
     appendNewObj,
+    returnLatestCompletedProjectList,
+    appendFromProjectListToCompleteProjectList,
+    appendFromCompleteProjectListToProjectList,
   };
 }
 
@@ -87,33 +114,100 @@ function simpleSvgMaker(svgInternal, className = "") {
 }
 
 function taskListContainerFunc(project) {
-  // const project = project;
-  function resetTaskListContainer() {
-    // reset taskListContainer
-    const taskListContainer = document.querySelector(".taskListContainer");
-    taskListContainer.innerText = "";
+  function resetInCompleteTaskListContainer() {
+    const incompleteTaskContainer = document.querySelector(
+      ".incompleteTaskContainer"
+    );
+    incompleteTaskContainer.innerText = "";
   }
-  function returnTaskListBasedOnProject(projectName) {
-    // get og object
-    // then from that obj get list you want
+  function resetCompleteTaskListContainer() {
+    const completedTaskContainer = document.querySelector(
+      ".completedTaskContainer"
+    );
+    completedTaskContainer.innerText = "";
+  }
+  function returnTaskListFromProject(projectName) {
     const projectObject = project.returnLatestProjectList();
     return projectObject[projectName];
   }
-  function fillTaskListContainer(taskList, projectName) {
-    const taskListContainer = document.querySelector(".taskListContainer");
+  function returnTaskListFromCompleteProject(projectName) {
+    const projectObject = project.returnLatestCompletedProjectList();
+    return projectObject[projectName];
+  }
+  function returnInCompleteTaskListBasedOnProject(projectName) {
+    const projectObject = project.returnLatestCompletedProjectList();
+    console.log("complete");
+    console.log(projectObject);
+    return projectObject[projectName];
+  }
+  function fillInCompleteTaskListContainer(projectName) {
+    const taskList = returnTaskListFromProject(projectName);
+    const taskListContainer = document.querySelector(
+      ".incompleteTaskContainer"
+    );
     taskListContainer.innerText = "";
     for (let i = 0; i < taskList.length; i++) {
-      // make element and insert it one by one in taskListContainer
-      const task = elementMaker("div", projectName);
-      task.innerText = taskList[i].title;
-      taskListContainer.append(task);
-      console.log(taskList[i].title);
+      const taskDiv = elementMaker("div", "taskDiv");
+
+      const taskElement = elementMaker("p");
+      taskElement.innerText = taskList[i].title;
+
+      const taskCheckBox = elementMaker("input", `${i}`);
+      taskCheckBox.classList.add(projectName);
+      taskCheckBox.setAttribute("type", "checkBox");
+
+      taskCheckBox.addEventListener("click", () => {
+        projectFunctions.appendFromProjectListToCompleteProjectList(
+          projectName,
+          i
+        );
+
+        taskDiv.remove();
+        fillCompleteTaskListContainer(projectName);
+      });
+      taskDiv.append(taskCheckBox, taskElement);
+      taskListContainer.append(taskDiv);
     }
   }
+
+  function fillCompleteTaskListContainer(projectName) {
+    const completeTaskList = returnTaskListFromCompleteProject(projectName);
+    const completedTaskContainer = document.querySelector(
+      ".completedTaskContainer"
+    );
+    resetCompleteTaskListContainer();
+    for (let i = 0; i < completeTaskList.length; i++) {
+      const taskDiv = elementMaker("div", "taskDiv");
+      const taskElement = elementMaker("p");
+
+      taskElement.innerText = completeTaskList[i].title;
+
+      const taskCheckBox = elementMaker("input", `${i}`);
+      taskCheckBox.classList.add(projectName);
+      taskCheckBox.setAttribute("type", "checkBox");
+      taskCheckBox.checked = true;
+
+      taskCheckBox.addEventListener("click", () => {
+        projectFunctions.appendFromCompleteProjectListToProjectList(
+          projectName,
+          i
+        );
+        taskDiv.remove();
+        fillInCompleteTaskListContainer(projectName);
+      });
+
+      taskDiv.append(taskCheckBox, taskElement);
+      completedTaskContainer.append(taskDiv);
+    }
+  }
+
   return {
-    resetTaskListContainer,
-    returnTaskListBasedOnProject,
-    fillTaskListContainer,
+    resetInCompleteTaskListContainer,
+    resetCompleteTaskListContainer,
+    returnTaskListFromProject,
+    fillInCompleteTaskListContainer,
+    fillCompleteTaskListContainer,
+    returnInCompleteTaskListBasedOnProject,
   };
 }
 
@@ -121,12 +215,20 @@ function makeTaskContainer(projectName) {
   deleteTaskContainer();
   const taskContainer = elementMaker("div", "taskContainer");
 
-  // two divs
   const taskListContainer = elementMaker("div", "taskListContainer"); //	one for task List
-  const inputContainer = elementMaker("div", "inputContainer"); // one for input list
+  taskListContainer.classList.add(projectName);
 
+  const incompleteTaskContainer = elementMaker(
+    "div",
+    "incompleteTaskContainer"
+  );
+  const completedTaskContainer = elementMaker("div", "completedTaskContainer");
+
+  const inputContainer = elementMaker("div", "inputContainer");
+
+  taskListContainer.append(incompleteTaskContainer, completedTaskContainer);
   inputContainer.append(...makeInputElement(projectName));
-  taskContainer.append(taskListContainer, inputContainer); // then insert these two in myDayContainer
+  taskContainer.append(taskListContainer, inputContainer);
   document.querySelector(".mainContainer").append(taskContainer);
 }
 

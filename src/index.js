@@ -33,16 +33,18 @@ document.querySelector(".To-Do").addEventListener("click", () => {
 
   // now whenever an string is entered create a task obj enter it into related property
   document.querySelector(".inputButton").addEventListener("click", function () {
-    const projectName = this.id;
-    // take input from inputField and reset it
     const inputValue = document.querySelector(".taskTitleInput").value;
-    const taskObj = taskObjFactoryFunction(inputValue);
-    projectFunctions.appendNewObj(projectName, taskObj);
+    if (inputValue) {
+      const projectName = this.id;
 
-    document.querySelector(".taskTitleInput").value = ""; // Reset the input field by assigning an empty string to its value
-    // then update .taskListContainer
-    taskListContainerFuncs.fillTaskListContainer(
-      taskListContainerFuncs.returnTaskListBasedOnProject(projectName)
-    );
+      const newTaskObj = taskObjFactoryFunction(inputValue);
+      projectFunctions.appendNewObj(projectName, newTaskObj);
+
+      document.querySelector(".taskTitleInput").value = ""; // Reset the input field by assigning an empty string to its value
+
+      // then update .taskListContainer
+      taskListContainerFuncs.fillInCompleteTaskListContainer(projectName);
+      taskListContainerFuncs.fillCompleteTaskListContainer(projectName);
+    }
   });
 });

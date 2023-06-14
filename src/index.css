@@ -78,12 +78,40 @@ input {
 }
 .taskListContainer div {
   display: flex;
-  align-items: center;
-  flex: 0 0 8%;
 }
 .inputContainer {
   display: flex;
 }
 .inputContainer input {
   flex: 1;
+}
+
+.incompleteTaskContainer {
+  display: flex;
+  flex-direction: column;
+}
+.completedTaskContainer {
+  background-color: gray;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.523) 1%,
+    transparent 50%
+  );
+  background-size: 1px 200px; /* Adjust the size of the cross line */
+  background-position: 0 50%;
+}
+.taskListContainer > div {
+  display: flex;
+  flex-direction: column;
+}
+.taskDiv {
+  border: 1px black solid;
+  gap: 20px;
+}
+.incompleteTaskContainer {
+  height: min-content;
+}
+.taskDiv > input {
+  width: min-content;
+  height: min-content;
 }
