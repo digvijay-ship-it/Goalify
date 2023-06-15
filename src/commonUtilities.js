@@ -59,6 +59,9 @@ function projectList() {
       completedProjectList[projectName].splice(taskIndex, 1)[0]
     );
   };
+  const clearCompletedProject = (projectName) => {
+    completedProjectList[projectName] = [];
+  };
   return {
     appendNewProject,
     returnLatestProjectList,
@@ -66,6 +69,7 @@ function projectList() {
     returnLatestCompletedProjectList,
     appendFromProjectListToCompleteProjectList,
     appendFromCompleteProjectListToProjectList,
+    clearCompletedProject,
   };
 }
 
@@ -118,13 +122,17 @@ function taskListContainerFunc(project) {
     const incompleteTaskContainer = document.querySelector(
       ".incompleteTaskContainer"
     );
-    incompleteTaskContainer.innerText = "";
+    if (incompleteTaskContainer) {
+      incompleteTaskContainer.innerText = "";
+    }
   }
   function resetCompleteTaskListContainer() {
     const completedTaskContainer = document.querySelector(
       ".completedTaskContainer"
     );
-    completedTaskContainer.innerText = "";
+    if (completedTaskContainer) {
+      completedTaskContainer.innerText = "";
+    }
   }
   function returnTaskListFromProject(projectName) {
     const projectObject = project.returnLatestProjectList();
@@ -142,10 +150,10 @@ function taskListContainerFunc(project) {
   }
   function fillInCompleteTaskListContainer(projectName) {
     const taskList = returnTaskListFromProject(projectName);
+    resetInCompleteTaskListContainer();
     const taskListContainer = document.querySelector(
       ".incompleteTaskContainer"
     );
-    taskListContainer.innerText = "";
     for (let i = 0; i < taskList.length; i++) {
       const taskDiv = elementMaker("div", "taskDiv");
 
@@ -252,6 +260,34 @@ function makeInputElement(projectName) {
   return [inputElement, inputButton];
 }
 
+function makeTaskContainerHeader(projectName) {
+  const taskContainerHeaderChecker = document.querySelector(
+    ".taskContainerHeader"
+  );
+  if (taskContainerHeaderChecker) {
+    taskContainerHeaderChecker.remove();
+  }
+  const taskContainerHeader = elementMaker("div", "taskContainerHeader");
+
+  const ProjectNameInHeader = elementMaker("h2");
+  ProjectNameInHeader.innerText = projectName;
+  const clearCompletedTasksButton = elementMaker(
+    "button",
+    "clearCompletedTasksButton"
+  );
+  clearCompletedTasksButton.setAttribute("type", "button");
+  clearCompletedTasksButton.innerText = "Clear completed tasks";
+
+  taskContainerHeader.append(ProjectNameInHeader, clearCompletedTasksButton);
+  document.querySelector(".mainContainer").append(taskContainerHeader);
+
+  // make an eventListener for .clearCompletedTasksButton
+  clearCompletedTasksButton.addEventListener("click", () => {
+    projectFunctions.clearCompletedProject(projectName); // to clear it from BackEnd
+    taskListContainerFuncs.fillCompleteTaskListContainer(projectName); // and Reload .completedTaskContainer
+  });
+}
+
 const priorityTagsFunc = priorityTags();
 const projectFunctions = projectList();
 const taskListContainerFuncs = taskListContainerFunc(projectFunctions);
@@ -265,4 +301,5 @@ export {
   simpleSvgMaker,
   taskListContainerFuncs,
   makeTaskContainer,
+  makeTaskContainerHeader,
 };

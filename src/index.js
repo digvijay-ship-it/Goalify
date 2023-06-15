@@ -8,6 +8,7 @@ import {
   projectFunctions,
   taskListContainerFuncs,
   makeTaskContainer,
+  makeTaskContainerHeader,
 } from "./commonUtilities";
 
 makeSidebar();
@@ -29,9 +30,11 @@ document.querySelector(".cancelButton").addEventListener("click", () => {
 
 document.querySelector(".To-Do").addEventListener("click", () => {
   const projectName = "default";
+  makeTaskContainerHeader(projectName);
+  taskListContainerFuncs.fillInCompleteTaskListContainer(projectName);
+  taskListContainerFuncs.fillCompleteTaskListContainer(projectName);
   makeTaskContainer(projectName);
 
-  // now whenever an string is entered create a task obj enter it into related property
   document.querySelector(".inputButton").addEventListener("click", function () {
     const inputValue = document.querySelector(".taskTitleInput").value;
     if (inputValue) {
@@ -42,7 +45,6 @@ document.querySelector(".To-Do").addEventListener("click", () => {
 
       document.querySelector(".taskTitleInput").value = ""; // Reset the input field by assigning an empty string to its value
 
-      // then update .taskListContainer
       taskListContainerFuncs.fillInCompleteTaskListContainer(projectName);
       taskListContainerFuncs.fillCompleteTaskListContainer(projectName);
     }

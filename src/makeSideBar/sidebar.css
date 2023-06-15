@@ -9,12 +9,10 @@ body {
 }
 .sidebar {
   background-color: rgb(144, 144, 144);
-  grid-row: 1/-1;
   grid-column: 1/2;
 }
 .sideBarHeader {
   text-align: center;
-  /* background-color: aqua; */
   margin: 16px;
 }
 
@@ -26,11 +24,9 @@ svg {
 .sideBarMainDaysContainer div {
   display: flex;
   gap: 0.2rem;
-  /* background-color: blueviolet; */
   width: fit-content;
 }
 .myProjects {
-  /* margin-right: 1rem; */
   text-align: center;
   font-size: 1.3rem;
   font-weight: 600;
