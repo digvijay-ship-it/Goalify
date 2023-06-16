@@ -1,0 +1,89 @@
+.taskContainer {
+  background-color: aliceblue;
+  height: 80%;
+  min-width: 500px;
+  max-width: 500px;
+  margin-top: 8%;
+  margin-left: 2.5%;
+  border-radius: 10px;
+  transition: 20ms;
+  display: flex;
+  flex-direction: column;
+  grid-row: 1/-1;
+  grid-column: 1/-1;
+}
+.taskListContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+.taskListContainer div {
+  display: flex;
+}
+
+.inputContainer {
+  display: flex;
+}
+.inputContainer input {
+  flex: 1;
+}
+
+.incompleteTaskContainer {
+  display: flex;
+  flex-direction: column;
+}
+.completedTaskContainer {
+  background-color: gray;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.523) 1%,
+    transparent 50%
+  );
+  background-size: 1px 200px; /* Adjust the size of the cross line */
+  background-position: 0 50%;
+}
+.taskListContainer > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.taskDiv {
+  border: 1px black solid;
+  gap: 20px;
+}
+.taskDiv > input {
+  width: min-content;
+  height: min-content;
+}
+.taskDiv > p {
+  width: 100%;
+  margin: 0px;
+  height: 30px;
+  display: grid;
+  align-items: center;
+}
+
+.taskContainerHeader {
+  display: flex;
+  margin-top: 1%;
+  margin-left: 2.5%;
+  gap: 50px;
+  background-color: gray;
+  width: fit-content;
+  height: 40px;
+  border-radius: 10px;
+  grid-row: 1/-1;
+  grid-column: 1/-1;
+}
+.taskContainerHeader button {
+  font-size: 1rem;
+  font-weight: 600;
+  height: max-content;
+  align-self: center;
+  margin-right: 20px;
+}
+.taskContainerHeader h2 {
+  margin-left: 20px;
+  align-self: center;
+}

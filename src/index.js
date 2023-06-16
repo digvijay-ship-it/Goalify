@@ -2,14 +2,18 @@ import "./index.css";
 import { makeSidebar } from "./makeSideBar/sidebar.js";
 import {
   elementMaker,
-  takeProjectNameFromUserForm,
-  enterProject,
   taskObjFactoryFunction,
   projectFunctions,
-  taskListContainerFuncs,
-  makeTaskContainer,
-  makeTaskContainerHeader,
 } from "./commonUtilities";
+import {
+  takeProjectNameFromUserForm,
+  enterProject,
+} from "./form-for-project/form";
+import {
+  makeTaskContainerHeader,
+  makeTaskContainer,
+  taskListContainerFuncs,
+} from "./task/taskListDisplay";
 
 makeSidebar();
 takeProjectNameFromUserForm();
@@ -30,17 +34,20 @@ document.querySelector(".cancelButton").addEventListener("click", () => {
 
 document.querySelector(".To-Do").addEventListener("click", () => {
   const projectName = "default";
+
   makeTaskContainerHeader(projectName);
-  taskListContainerFuncs.fillInCompleteTaskListContainer(projectName);
-  taskListContainerFuncs.fillCompleteTaskListContainer(projectName);
+
   makeTaskContainer(projectName);
 
+  taskListContainerFuncs.fillInCompleteTaskListContainer(projectName);
+  taskListContainerFuncs.fillCompleteTaskListContainer(projectName);
+
   document.querySelector(".inputButton").addEventListener("click", function () {
-    const inputValue = document.querySelector(".taskTitleInput").value;
-    if (inputValue) {
+    const taskTitle = document.querySelector(".taskTitleInput").value;
+    if (taskTitle) {
       const projectName = this.id;
 
-      const newTaskObj = taskObjFactoryFunction(inputValue);
+      const newTaskObj = taskObjFactoryFunction(taskTitle);
       projectFunctions.appendNewObj(projectName, newTaskObj);
 
       document.querySelector(".taskTitleInput").value = ""; // Reset the input field by assigning an empty string to its value
@@ -50,3 +57,4 @@ document.querySelector(".To-Do").addEventListener("click", () => {
     }
   });
 });
+// when a we click on taskDiv it should open a related task where we can do some changes in it

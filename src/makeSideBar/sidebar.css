@@ -10,6 +10,7 @@ body {
 .sidebar {
   background-color: rgb(144, 144, 144);
   grid-column: 1/2;
+  grid-row: 1/-1;
 }
 .sideBarHeader {
   text-align: center;
@@ -39,4 +40,8 @@ svg {
 .sideBarMain div:hover {
   color: rgb(77, 77, 255);
   fill: rgb(77, 77, 255);
+}
+
+.project {
+  margin: 20px auto;
 }
