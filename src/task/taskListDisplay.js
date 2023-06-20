@@ -4,8 +4,9 @@ import {
   elementMaker,
   simpleSvgMaker,
 } from "../commonUtilities";
+import { showTaskDetailInUi } from "./taskIndividualDisplay.js";
 
-function makeTaskContainerHeader(projectName) {
+function makeTaskListContainerHeader(projectName) {
   const taskContainerHeaderChecker = document.querySelector(
     ".taskContainerHeader"
   );
@@ -32,8 +33,8 @@ function makeTaskContainerHeader(projectName) {
     taskListContainerFuncs.fillCompleteTaskListContainer(projectName); // and Reload .completedTaskContainer
   });
 }
-function makeTaskContainer(projectName) {
-  deleteTaskContainer();
+function makeTaskListContainer(projectName) {
+  deleteTaskListContainer();
   const taskContainer = elementMaker("div", "taskContainer");
 
   const taskListContainer = elementMaker("div", "taskListContainer"); //	one for task List
@@ -48,19 +49,19 @@ function makeTaskContainer(projectName) {
   const inputContainer = elementMaker("div", "inputContainer");
 
   taskListContainer.append(incompleteTaskContainer, completedTaskContainer);
-  inputContainer.append(...makeInputElement(projectName));
+  inputContainer.append(...makeInputElementForTaskList(projectName));
   taskContainer.append(taskListContainer, inputContainer);
   document.querySelector(".mainContainer").append(taskContainer);
 }
 
-function deleteTaskContainer() {
+function deleteTaskListContainer() {
   const taskContainerToRemove = document.querySelector(".taskContainer");
   if (taskContainerToRemove) {
     taskContainerToRemove.remove();
   }
 }
 
-function makeInputElement(projectName) {
+function makeInputElementForTaskList(projectName) {
   const inputElement = elementMaker("input", "taskTitleInput");
 
   const inputButton = elementMaker("button", "inputButton");
@@ -113,6 +114,11 @@ function taskListContainerFunc(project) {
 
       const taskElement = elementMaker("p", "taskTitle");
       taskElement.innerText = taskList[i].title;
+
+      taskElement.addEventListener(
+        "click",
+        showTaskDetailInUi.bind(null, projectName)
+      );
 
       const taskCheckBox = elementMaker("input", `${i}`);
       taskCheckBox.classList.add(projectName);
@@ -177,4 +183,8 @@ function taskListContainerFunc(project) {
 
 const taskListContainerFuncs = taskListContainerFunc(projectFunctions);
 
-export { makeTaskContainerHeader, makeTaskContainer, taskListContainerFuncs };
+export {
+  makeTaskListContainerHeader,
+  makeTaskListContainer,
+  taskListContainerFuncs,
+};

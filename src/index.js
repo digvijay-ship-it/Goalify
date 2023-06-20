@@ -10,8 +10,8 @@ import {
   enterProject,
 } from "./form-for-project/form";
 import {
-  makeTaskContainerHeader,
-  makeTaskContainer,
+  makeTaskListContainerHeader,
+  makeTaskListContainer,
   taskListContainerFuncs,
 } from "./task/taskListDisplay";
 
@@ -35,9 +35,9 @@ document.querySelector(".cancelButton").addEventListener("click", () => {
 document.querySelector(".To-Do").addEventListener("click", () => {
   const projectName = "default";
 
-  makeTaskContainerHeader(projectName);
+  makeTaskListContainerHeader(projectName);
 
-  makeTaskContainer(projectName);
+  makeTaskListContainer(projectName);
 
   taskListContainerFuncs.fillInCompleteTaskListContainer(projectName);
   taskListContainerFuncs.fillCompleteTaskListContainer(projectName);

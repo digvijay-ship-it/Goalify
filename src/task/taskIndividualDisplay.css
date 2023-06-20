@@ -1,0 +1,76 @@
+.taskDetailsContainer {
+  background-color: rgba(0, 0, 0, 0.911);
+  align-self: center;
+  justify-self: center;
+  grid-row: 1/-1;
+  grid-column: 1/-1;
+  width: 500px;
+  height: 600px;
+  color: white;
+  overflow: scroll;
+}
+.taskDetailHeaderContainer {
+  display: flex;
+}
+.taskDetailHeaderContainer p {
+  height: min-content;
+  margin: 0px;
+  margin-bottom: 20px;
+}
+.taskDetailHeaderContainer button {
+  font-weight: 900;
+  font-size: 1rem;
+  height: max-content;
+}
+.closeTaskContainerButton {
+  background-color: red;
+}
+.saveState {
+  margin-left: auto;
+  background-color: aqua;
+}
+.taskDetailsContainer svg {
+  background-color: aliceblue;
+}
+.newTempSubTaskDiv {
+  display: flex;
+}
+.preSubTaskDiv {
+  color: black;
+}
+.preSubTaskDiv div input {
+  background-color: rgb(135, 255, 135);
+}
+
+.preCompletedSubTaskDiv div input {
+  background-color: rgb(255, 129, 129);
+}
+.inputWrapper :first-child {
+  background-color: aqua;
+  width: min-content;
+  justify-self: end;
+}
+.inputWrapper {
+  display: grid;
+  grid-template-columns: 1fr 10fr;
+  grid-template-rows: 1fr;
+}
+.inputWrapper input:last-of-type {
+  width: 90%;
+  justify-self: center;
+  grid-column: 2/-1;
+  grid-row: 1/-1;
+  height: min-content;
+}
+.hidden {
+  display: none;
+}
+.crossLine {
+  grid-column: 2/-1;
+  grid-row: 1/-1;
+  width: 95%;
+  height: 1px;
+  border: 0px;
+  background-color: white;
+  margin: auto;
+}

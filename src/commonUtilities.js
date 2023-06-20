@@ -1,4 +1,3 @@
-import { enterProject } from "./form-for-project/form";
 function elementMaker(elementName, elementClass = "") {
   const element = document.createElement(elementName);
   if (elementClass) {
@@ -12,7 +11,8 @@ function taskObjFactoryFunction(title, notes = "", dueDate = "") {
     title,
     notes,
     dueDate,
-    subTask: [],
+    subTaskList: [],
+    completeSubTaskList: [],
     priorityList: [],
   };
 }
@@ -62,6 +62,43 @@ function projectList() {
   const clearCompletedProject = (projectName) => {
     completedProjectList[projectName] = [];
   };
+  const addSubTaskToTask = (projectName, taskIndex, subTask) => {
+    projectList[projectName][taskIndex].subTaskList.push(subTask);
+  };
+  const returnSubtaskList = (projectName, taskIndex) => {
+    return projectList[projectName][taskIndex].subTaskList;
+  };
+  const returnCompleteSubtaskList = (projectName, taskIndex) => {
+    return projectList[projectName][taskIndex].completeSubTaskList;
+  };
+
+  const updateSubTask = (projectName, taskIndex, subTaskIndex, subTask) => {
+    projectList[projectName][taskIndex].subTaskList[subTaskIndex] = subTask;
+  };
+
+  const insertFromSubtaskListToCompletedSubTaskList = (
+    projectName,
+    taskIndex,
+    subTaskIndex
+  ) => {
+    projectList[projectName][taskIndex].completeSubTaskList.push(
+      projectList[projectName][taskIndex].subTaskList.splice(subTaskIndex, 1)[0]
+    );
+  };
+
+  const insertFromCompleteSubtaskListToSubTaskList = (
+    projectName,
+    taskIndex,
+    subTaskIndex
+  ) => {
+    projectList[projectName][taskIndex].subTaskList.push(
+      projectList[projectName][taskIndex].completeSubTaskList.splice(
+        subTaskIndex,
+        1
+      )[0]
+    );
+  };
+
   return {
     appendNewProject,
     returnLatestProjectList,
@@ -70,6 +107,12 @@ function projectList() {
     appendFromProjectListToCompleteProjectList,
     appendFromCompleteProjectListToProjectList,
     clearCompletedProject,
+    addSubTaskToTask,
+    returnSubtaskList,
+    returnCompleteSubtaskList,
+    updateSubTask,
+    insertFromSubtaskListToCompletedSubTaskList,
+    insertFromCompleteSubtaskListToSubTaskList,
   };
 }
 
