@@ -18,7 +18,7 @@ function taskObjFactoryFunction(title, notes = "", dueDate = "") {
 }
 
 function priorityTags() {
-  const tagList = ["important", "work"];
+  const tagList = ["important", "work", "Any day", "Urgent"];
   const appendElement = (newTag) => tagList.push(newTag);
   const returnLatestTagList = () => tagList;
   return {
@@ -76,6 +76,22 @@ function projectList() {
     projectList[projectName][taskIndex].subTaskList[subTaskIndex] = subTask;
   };
 
+  const updateTaskTitle = (projectName, taskIndex, newTitle) => {
+    projectList[projectName][taskIndex].title = newTitle;
+  };
+
+  const updateTaskDescription = (projectName, taskIndex, desc) => {
+    projectList[projectName][taskIndex].notes = desc;
+  };
+
+  const returnTaskDescription = (projectName, taskIndex) => {
+    return projectList[projectName][taskIndex].notes;
+  };
+
+  const addDateToTask = (projectName, taskIndex, date) => {
+    projectList[projectName][taskIndex].dueDate = date;
+  };
+
   const insertFromSubtaskListToCompletedSubTaskList = (
     projectName,
     taskIndex,
@@ -99,6 +115,10 @@ function projectList() {
     );
   };
 
+  const returnTaskDate = (projectName, taskIndex) => {
+    return projectList[projectName][taskIndex].dueDate;
+  };
+
   return {
     appendNewProject,
     returnLatestProjectList,
@@ -113,6 +133,11 @@ function projectList() {
     updateSubTask,
     insertFromSubtaskListToCompletedSubTaskList,
     insertFromCompleteSubtaskListToSubTaskList,
+    updateTaskTitle,
+    addDateToTask,
+    returnTaskDate,
+    updateTaskDescription,
+    returnTaskDescription,
   };
 }
 

@@ -24,6 +24,7 @@
 }
 .closeTaskContainerButton {
   background-color: red;
+  margin-left: auto;
 }
 .saveState {
   margin-left: auto;
@@ -73,4 +74,31 @@
   border: 0px;
   background-color: white;
   margin: auto;
+}
+.taskNameUpdate {
+  margin: 1rem;
+}
+.descContainer,
+.dateContainer {
+  display: flex;
+  margin: 1rem;
+}
+.descContainer label,
+.dateContainer label {
+  width: min-content;
+  font-size: 1rem;
+  display: flex;
+  /* height: 100%; */
+  align-items: center;
+}
+
+.subTaskContainer {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+  margin: 1rem;
+}
+
+.taskDetailTitle {
+  margin-left: 16px;
 }

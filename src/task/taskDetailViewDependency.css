@@ -1,0 +1,51 @@
+#popupContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#datePicker {
+  background-color: white;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.RemindMePanel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  grid-row: 1/-1;
+  grid-column: 2/-1;
+}
+
+#popupContainer.hidden {
+  display: none;
+}
+.dateAction {
+  display: flex;
+  flex-direction: column;
+}
+.dateAction button {
+  font-weight: 900;
+}
+
+.dateContainer {
+  display: flex;
+  justify-content: center;
+}
+.dateContainer button {
+  margin-right: auto;
+}
+.dateContainer p {
+  height: min-content;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: 50%;
+}

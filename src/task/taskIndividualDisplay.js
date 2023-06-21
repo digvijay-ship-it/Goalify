@@ -5,66 +5,35 @@ import {
   projectFunctions,
 } from "../commonUtilities";
 
+import {
+  tasKDetailViewHeader,
+  tasKDetailViewTitle,
+  taskDetailViewDate,
+  taskDetailViewDescription,
+} from "./taskDetailViewDependency";
+
 function showTaskDetailInUi(projectName, event) {
   // make a window to display and edit task details
   const previousSibling = event.target.previousElementSibling;
-  const indexOfTask = previousSibling.classList.item(0);
+  const taskIndex = previousSibling.classList.item(0);
 
   const taskDetailsContainer = elementMaker("div", "taskDetailsContainer");
+
   // // // enter header container with projectName and a button to close
-  const taskDetailHeaderContainer = elementMaker(
-    "div",
-    "taskDetailHeaderContainer"
-  );
-
-  const projectNamePara = elementMaker("p");
-  projectNamePara.innerText = "Project Name->" + projectName;
-  const closeTaskContainerButton = elementMaker(
-    "button",
-    "closeTaskContainerButton"
-  );
-  closeTaskContainerButton.innerText = "Close";
-
-  closeTaskContainerButton.addEventListener("click", () => {
-    taskDetailsContainer.remove();
-  });
-
-  taskDetailHeaderContainer.append(projectNamePara, closeTaskContainerButton);
+  const taskDetailHeaderContainer = tasKDetailViewHeader(projectName);
 
   // // // container to edit title
-  const taskNameUpdate = elementMaker("input", "taskNameUpdate");
-  taskNameUpdate.value = event.target.textContent;
-  taskNameUpdate.addEventListener("input", function (event) {
-    const newValue = event.target.value;
-    console.log("New value:", newValue);
-    // Perform further actions with the new value...
-  });
-  // // // container to edit date, priority
-  const dateLabel = elementMaker("label");
+  const taskNameUpdate = tasKDetailViewTitle(
+    event.target.textContent,
+    projectName,
+    taskIndex
+  );
+
   const dateContainer = elementMaker("div", "dateContainer");
-  dateLabel.innerText = "Set reminder";
-  dateLabel.setAttribute("for", "date");
-  const dateInput = elementMaker("input");
-  dateInput.setAttribute("type", "date");
-  dateInput.setAttribute("id", "date");
-  dateInput.addEventListener("input", function (event) {
-    const newValue = event.target.value;
-    console.log("New value:", newValue);
-  });
-  dateContainer.append(dateLabel, dateInput);
+
   // // // container to edit description
-  const descContainer = elementMaker("div");
-  descContainer.classList.add("descContainer");
-  const descLabel = elementMaker("label");
-  descLabel.innerText = "Notes";
-  descLabel.setAttribute("for", "notes");
-  const descInput = elementMaker("input");
-  descInput.setAttribute("id", "notes");
-  descInput.addEventListener("input", function (event) {
-    const newValue = event.target.value;
-    console.log("New value:", newValue);
-  });
-  descContainer.append(descLabel, descInput);
+  const descContainer = elementMaker("div", "descContainer");
+
   // // // container to add subTask
   const preSubTaskContainer = elementMaker("div", "preSubTaskContainer");
 
@@ -87,7 +56,7 @@ function showTaskDetailInUi(projectName, event) {
   subTaskContainer.append(plusIcon, subTaskInput);
   subTaskContainer.addEventListener(
     "click",
-    addTempSubTask.bind(this, projectName, indexOfTask)
+    addTempSubTask.bind(this, projectName, taskIndex)
   );
   taskDetailsContainer.append(
     taskDetailHeaderContainer,
@@ -98,7 +67,15 @@ function showTaskDetailInUi(projectName, event) {
     newTempSubTaskDiv,
     subTaskContainer
   );
+
   document.querySelector(".mainContainer").append(taskDetailsContainer);
+
+  // // // container to edit date, priority
+  taskDetailViewDate(projectName, taskIndex);
+  taskDetailViewDescription(projectName, taskIndex);
+
+  reloadCompleteSubTaskDiv(projectName, taskIndex);
+  reloadInCompleteSubTaskDiv(projectName, taskIndex);
 }
 function addTempSubTask(projectName, taskIndex) {
   // check if last childSubTaskDiv' input element one has some value
@@ -123,7 +100,6 @@ function addTempSubTask(projectName, taskIndex) {
         event.target.value
       );
 
-      console.log(projectFunctions.returnSubtaskList(projectName, taskIndex));
       // reload preSubTaskDiv with new values
       reloadInCompleteSubTaskDiv(projectName, taskIndex);
     }

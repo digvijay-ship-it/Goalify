@@ -33,6 +33,7 @@ function makeTaskListContainerHeader(projectName) {
     taskListContainerFuncs.fillCompleteTaskListContainer(projectName); // and Reload .completedTaskContainer
   });
 }
+
 function makeTaskListContainer(projectName) {
   deleteTaskListContainer();
   const taskContainer = elementMaker("div", "taskContainer");
