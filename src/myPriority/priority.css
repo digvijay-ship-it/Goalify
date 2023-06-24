@@ -1,0 +1,82 @@
+.tagButtonContainer {
+  margin: 2rem 1rem;
+  display: flex;
+  justify-content: space-around;
+}
+
+.tagButtonContainer button {
+  font-size: large;
+  font-weight: 600;
+  height: 30px;
+  border-radius: 10px;
+}
+
+.tagButtonContainer :first-child {
+  background-color: rgb(143, 255, 143);
+}
+
+.tagButtonContainer :last-child {
+  background-color: rgb(255, 139, 139);
+}
+
+#TagHome {
+  grid-row: 1/-1;
+  grid-column: 1/-1;
+}
+
+#newTagInputContainer {
+  grid-row: 1/-1;
+  grid-column: 1/-1;
+  background-color: rgba(0, 0, 0, 0.523);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  position: relative;
+}
+
+#newTagInputContainer button {
+  font-size: large;
+  font-weight: 600;
+  height: 30px;
+  border-radius: 10px;
+}
+
+#newTagInputContainer div {
+  display: flex;
+  justify-content: space-around;
+}
+
+#tagInputWrapper {
+  display: flex;
+  flex-direction: column;
+  width: min-content;
+  height: min-content;
+  align-self: center;
+  justify-self: center;
+  gap: 1rem;
+}
+
+#newTagInputContainer.hidden {
+  display: none;
+}
+
+.tagWrapper {
+  display: flex;
+  background-color: white;
+  width: 90%;
+  margin: 1rem auto;
+  border-radius: 50px;
+}
+
+.tagWrapper input {
+  width: 2rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
+.tagWrapper div {
+  display: flex;
+  font-size: larger;
+  font-weight: 469;
+  align-items: center;
+}

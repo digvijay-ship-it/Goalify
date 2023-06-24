@@ -101,14 +101,9 @@ function taskDetailViewDate(projectName, taskIndex) {
   const nextWeekButton = elementMaker("button", "nextWeekButton");
   nextWeekButton.textContent = "Next Week";
 
-  // // Create the 'Recurring' button
-  // const recurringButton = elementMaker("button", "recurringButton");
-  // recurringButton.textContent = "Recurring";
-
   // Append the buttons to the Remind Me panel
   remindMePanel.appendChild(tomorrowButton);
   remindMePanel.appendChild(nextWeekButton);
-  // remindMePanel.appendChild(recurringButton);
 
   // Create the date action container
   const dateActionContainer = document.createElement("div");
@@ -155,7 +150,6 @@ function addDateRelatedEventListener() {
   const popupContainer = document.querySelector("#popupContainer");
   const openPopupButton = document.querySelector("#openPopup");
   const closeButton = document.querySelector("#closePopup");
-  const datePicker = document.querySelector("#datePicker");
   const submitButton = document.getElementById("submitReminder");
 
   const tomorrowButton = document.querySelector(".tomorrowButton");
@@ -205,11 +199,6 @@ function addDateRelatedEventListener() {
     popupContainer.classList.add("hidden");
     addDateInTaskDetail(projectName, taskIndex);
   });
-
-  // recurringButton.addEventListener("click", () => {
-  //   console.log("Recurring button clicked");
-  //   // Perform actions for the Recurring button
-  // });
 }
 
 function taskDetailViewDescription(projectName, taskIndex) {

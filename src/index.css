@@ -24,4 +24,5 @@ input {
 
 .mainContainer {
   display: grid;
+  grid-template-rows: 1fr 7fr;
 }

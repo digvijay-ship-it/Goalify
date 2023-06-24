@@ -4,6 +4,7 @@ import {
   elementMaker,
   taskObjFactoryFunction,
   projectFunctions,
+  clearMainContainer,
 } from "./commonUtilities";
 import {
   takeProjectNameFromUserForm,
@@ -35,8 +36,9 @@ document.querySelector(".cancelButton").addEventListener("click", () => {
 document.querySelector(".To-Do").addEventListener("click", () => {
   const projectName = "default";
 
-  makeTaskListContainerHeader(projectName);
+  clearMainContainer();
 
+  makeTaskListContainerHeader(projectName);
   makeTaskListContainer(projectName);
 
   taskListContainerFuncs.fillInCompleteTaskListContainer(projectName);
@@ -57,4 +59,3 @@ document.querySelector(".To-Do").addEventListener("click", () => {
     }
   });
 });
-// when a we click on taskDiv it should open a related task where we can do some changes in it

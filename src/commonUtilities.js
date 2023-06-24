@@ -6,6 +6,11 @@ function elementMaker(elementName, elementClass = "") {
   return element;
 }
 
+function clearMainContainer() {
+  const mainContainer = document.querySelector(".mainContainer");
+  mainContainer.innerText = "";
+}
+
 function taskObjFactoryFunction(title, notes = "", dueDate = "") {
   return {
     title,
@@ -18,12 +23,24 @@ function taskObjFactoryFunction(title, notes = "", dueDate = "") {
 }
 
 function priorityTags() {
-  const tagList = ["important", "work", "Any day", "Urgent"];
-  const appendElement = (newTag) => tagList.push(newTag);
-  const returnLatestTagList = () => tagList;
+  const tagObject = new Map();
+  tagObject.set(0, "Important");
+  tagObject.set(1, "Work");
+  tagObject.set(2, "Urgent");
+  tagObject.set(3, "Priority");
+  tagObject.set(4, "Family");
+  const appendNewTag = (indexNumber, newTag) => {
+    tagObject.set(indexNumber, newTag);
+  };
+  const returnLatestTagObject = () => tagObject;
+  const deleteOneTagObjectProperty = (propertyName) => {
+    const propertyNameInt = parseInt(propertyName, 10);
+    tagObject.delete(propertyNameInt);
+  };
   return {
-    appendElement,
-    returnLatestTagList,
+    appendNewTag,
+    returnLatestTagObject,
+    deleteOneTagObjectProperty,
   };
 }
 
@@ -156,4 +173,5 @@ export {
   taskObjFactoryFunction,
   projectFunctions,
   simpleSvgMaker,
+  clearMainContainer,
 };

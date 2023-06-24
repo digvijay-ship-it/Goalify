@@ -1,6 +1,6 @@
 body {
   margin: 0px;
-  background-color: rgb(169, 16, 16);
+  background-color: rgba(0, 0, 0, 0.879);
   width: inherit;
   height: inherit;
   display: grid;
@@ -34,8 +34,15 @@ svg {
   display: flex;
   justify-content: space-evenly;
 }
-.myProjects div {
+.myProjects div,
+.myTags div {
   align-self: center;
+  margin-left: 2rem;
+}
+
+.myProjects svg {
+  margin-left: auto;
+  margin-right: 2rem;
 }
 .sideBarMain div:hover {
   color: rgb(77, 77, 255);
@@ -44,4 +51,23 @@ svg {
 
 .project {
   margin: 20px auto;
+}
+
+.myTags {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-evenly;
+  order: 2;
+}
+
+.myTags svg {
+  margin-left: auto;
+  margin-right: 2rem;
+}
+
+.sideBarMain {
+  display: flex;
+  flex-direction: column;
 }
