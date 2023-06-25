@@ -4,6 +4,8 @@ import {
   elementMaker,
   simpleSvgMaker,
   priorityTagsFunc,
+  clearMainContainer,
+  taskObjFactoryFunction,
 } from "../commonUtilities";
 import { format } from "date-fns";
 
@@ -260,10 +262,37 @@ function deletePreviousPopUpContainerDate() {
   }
 }
 
+function makeTaskListView(projectName) {
+  console.log("hit");
+  clearMainContainer();
+
+  makeTaskListContainerHeader(projectName);
+  makeTaskListContainer(projectName);
+
+  taskListContainerFuncs.fillInCompleteTaskListContainer(projectName);
+  taskListContainerFuncs.fillCompleteTaskListContainer(projectName);
+
+  document.querySelector(".inputButton").addEventListener("click", function () {
+    const taskTitle = document.querySelector(".taskTitleInput").value;
+    if (taskTitle) {
+      const projectName = this.id;
+
+      const newTaskObj = taskObjFactoryFunction(taskTitle);
+      projectFunctions.appendNewObj(projectName, newTaskObj);
+
+      document.querySelector(".taskTitleInput").value = ""; // Reset the input field by assigning an empty string to its value
+
+      taskListContainerFuncs.fillInCompleteTaskListContainer(projectName);
+      taskListContainerFuncs.fillCompleteTaskListContainer(projectName);
+    }
+  });
+}
+
 const taskListContainerFuncs = taskListContainerFunc(projectFunctions);
 
 export {
   makeTaskListContainerHeader,
   makeTaskListContainer,
   taskListContainerFuncs,
+  makeTaskListView,
 };

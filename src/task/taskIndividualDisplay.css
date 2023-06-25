@@ -130,3 +130,12 @@
 .CompletedTask .closeTaskContainerButton {
   pointer-events: auto;
 }
+.priorityContainerButtons {
+  display: flex;
+  justify-content: space-around;
+}
+.priorityContainerButtons button {
+  height: 40px;
+  flex: 1;
+  border-radius: 0.5rem;
+}

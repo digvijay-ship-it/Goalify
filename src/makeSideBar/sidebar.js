@@ -4,9 +4,12 @@ import {
   projectFunctions,
   simpleSvgMaker,
   clearMainContainer,
+  taskObjFactoryFunction,
 } from "../commonUtilities.js";
 
 import { makeTagHome, refreshTagsContainer } from "../myPriority/priority";
+
+import { makeTaskListView } from "../task/taskListDisplay.js";
 
 function makeSidebar() {
   const sideBar = elementMaker("div", "sidebar");
@@ -75,6 +78,10 @@ function fillSideBarMainProjectListContainer(projectList = []) {
       element.classList.add("project");
       element.innerText = `${projectName}`;
       sideBarMainProjectList.append(element);
+
+      element.addEventListener("click", () => {
+        makeTaskListView(projectName);
+      });
     }
   }
   document.querySelector(".sideBarMain").append(sideBarMainProjectList);

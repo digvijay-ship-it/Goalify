@@ -29,15 +29,14 @@ function takeProjectNameFromUserForm() {
 }
 
 function addEventListenerForProjectForm() {
-  document
-    .querySelector(".submitButton")
-    .addEventListener("click", enterProject);
+  const projectFormContainer = document.querySelector(".projectFormContainer");
+  document.querySelector(".submitButton").addEventListener("click", () => {
+    enterProject();
+    projectFormContainer.remove();
+  });
 
   document.querySelector(".cancelButton").addEventListener("click", () => {
-    const projectFormContainer = document.querySelector(
-      ".projectFormContainer"
-    );
-    projectFormContainer.classList.add("hidden");
+    projectFormContainer.remove();
   });
 }
 
