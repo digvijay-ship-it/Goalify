@@ -1,4 +1,4 @@
-#popupContainer {
+#popUpContainerDate {
   position: fixed;
   top: 0;
   left: 0;
@@ -11,6 +11,8 @@
 }
 
 #datePicker {
+  height: 400px;
+  width: 600px;
   background-color: white;
   padding: 20px;
   display: grid;
@@ -25,7 +27,7 @@
   grid-column: 2/-1;
 }
 
-#popupContainer.hidden {
+#popUpContainerDate.hidden {
   display: none;
 }
 .dateAction {
@@ -36,16 +38,21 @@
   font-weight: 900;
 }
 
-.dateContainer {
+.TaskDetailButtonContainer {
   display: flex;
-  justify-content: center;
+  gap: 1rem;
+  flex-direction: column;
 }
-.dateContainer button {
+.TaskDetailButtonContainer button {
   margin-right: auto;
 }
-.dateContainer p {
+.TaskDetailButtonContainer p {
   height: min-content;
   margin-top: 0px;
   margin-bottom: 0px;
   margin-right: 50%;
+}
+
+.dateContainer {
+  display: flex;
 }

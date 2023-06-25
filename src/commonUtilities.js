@@ -18,7 +18,7 @@ function taskObjFactoryFunction(title, notes = "", dueDate = "") {
     dueDate,
     subTaskList: [],
     completeSubTaskList: [],
-    priorityList: [],
+    priorityList: [0],
   };
 }
 
@@ -82,11 +82,19 @@ function projectList() {
   const addSubTaskToTask = (projectName, taskIndex, subTask) => {
     projectList[projectName][taskIndex].subTaskList.push(subTask);
   };
+
   const returnSubtaskList = (projectName, taskIndex) => {
     return projectList[projectName][taskIndex].subTaskList;
   };
+  const returnSubtaskListOfCompletedTask = (projectName, taskIndex) => {
+    return completedProjectList[projectName][taskIndex].subTaskList;
+  };
+
   const returnCompleteSubtaskList = (projectName, taskIndex) => {
     return projectList[projectName][taskIndex].completeSubTaskList;
+  };
+  const returnCompleteSubtaskListOfCompletedTask = (projectName, taskIndex) => {
+    return completedProjectList[projectName][taskIndex].completeSubTaskList;
   };
 
   const updateSubTask = (projectName, taskIndex, subTaskIndex, subTask) => {
@@ -103,6 +111,18 @@ function projectList() {
 
   const returnTaskDescription = (projectName, taskIndex) => {
     return projectList[projectName][taskIndex].notes;
+  };
+
+  const returnTaskDescriptionOfCompletedTask = (projectName, taskIndex) => {
+    return completedProjectList[projectName][taskIndex].notes;
+  };
+
+  const returnTaskPriorityList = (projectName, taskIndex) => {
+    return projectList[projectName][taskIndex].priorityList;
+  };
+
+  const returnCompletedTaskPriorityList = (projectName, taskIndex) => {
+    return completedProjectList[projectName][taskIndex].priorityList;
   };
 
   const addDateToTask = (projectName, taskIndex, date) => {
@@ -135,6 +155,25 @@ function projectList() {
   const returnTaskDate = (projectName, taskIndex) => {
     return projectList[projectName][taskIndex].dueDate;
   };
+  const returnTaskDateOfCompleteTask = (projectName, taskIndex) => {
+    return completedProjectList[projectName][taskIndex].dueDate;
+  };
+
+  const deleteTagFromTaskList = (projectName, taskIndex, tagValue) => {
+    const indexOfTagValue = projectList[projectName][
+      taskIndex
+    ].priorityList.indexOf(parseInt(tagValue));
+
+    if (indexOfTagValue !== -1 || indexOfTagValue === 0) {
+      projectList[projectName][taskIndex].priorityList.splice(
+        indexOfTagValue,
+        1
+      );
+    }
+  };
+  const addTagToTaskList = (projectName, taskIndex, id) => {
+    projectList[projectName][taskIndex].priorityList.push(parseInt(id));
+  };
 
   return {
     appendNewProject,
@@ -146,15 +185,23 @@ function projectList() {
     clearCompletedProject,
     addSubTaskToTask,
     returnSubtaskList,
+    returnSubtaskListOfCompletedTask,
     returnCompleteSubtaskList,
+    returnCompleteSubtaskListOfCompletedTask,
     updateSubTask,
     insertFromSubtaskListToCompletedSubTaskList,
     insertFromCompleteSubtaskListToSubTaskList,
     updateTaskTitle,
     addDateToTask,
     returnTaskDate,
+    returnTaskDateOfCompleteTask,
     updateTaskDescription,
     returnTaskDescription,
+    returnTaskDescriptionOfCompletedTask,
+    returnTaskPriorityList,
+    returnCompletedTaskPriorityList,
+    deleteTagFromTaskList,
+    addTagToTaskList,
   };
 }
 

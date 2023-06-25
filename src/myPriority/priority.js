@@ -48,9 +48,9 @@ function makeTagHeaderButtonContainer() {
         if (tagWrappers[index].firstChild.checked) {
           const propertyName = tagWrappers[index].firstChild.classList.item(0);
           priorityTagsFunc.deleteOneTagObjectProperty(propertyName);
-          refreshTagsContainer();
         }
       }
+      refreshTagsContainer();
     }
   });
 

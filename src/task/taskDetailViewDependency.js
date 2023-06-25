@@ -22,7 +22,7 @@ function tasKDetailViewHeader(projectName) {
 
   closeTaskContainerButton.addEventListener("click", () => {
     const taskDetailsContainer = document.querySelector(
-      ".taskDetailsContainer"
+      ".taskDetailViewContainer"
     );
     taskDetailsContainer.remove();
     taskListContainerFuncs.fillInCompleteTaskListContainer(projectName);
@@ -53,8 +53,16 @@ function tasKDetailViewTitle(title, projectName, taskIndex) {
   return taskTitle;
 }
 
-function addDateInTaskDetail(projectName, taskIndex) {
-  const date = projectFunctions.returnTaskDate(projectName, taskIndex);
+function addDateInTaskDetail(projectName, taskIndex, taskStatus) {
+  let date;
+  if (taskStatus === "complete") {
+    date = projectFunctions.returnTaskDateOfCompleteTask(
+      projectName,
+      taskIndex
+    );
+  } else {
+    date = projectFunctions.returnTaskDate(projectName, taskIndex);
+  }
   if (date) {
     const dateContainer = document.querySelector(".dateContainer");
 
@@ -65,8 +73,8 @@ function addDateInTaskDetail(projectName, taskIndex) {
   }
 }
 
-function taskDetailViewDate(projectName, taskIndex) {
-  const dateButtonContainer = document.querySelector(".dateContainer");
+function taskDetailViewDate(projectName, taskIndex, taskStatus) {
+  const dateContainer = document.querySelector(".dateContainer");
 
   // check if task date exist
   // //if it does then show it in <p>
@@ -76,9 +84,9 @@ function taskDetailViewDate(projectName, taskIndex) {
   openPopupButton.textContent = "Set Reminder";
 
   // Create the popup container
-  const popupContainer = document.createElement("div");
-  popupContainer.setAttribute("id", "popupContainer");
-  popupContainer.classList.add("hidden");
+  const popUpContainerDate = document.createElement("div");
+  popUpContainerDate.setAttribute("id", "popUpContainerDate");
+  popUpContainerDate.classList.add("hidden");
 
   // Create the date picker
   const datePicker = document.createElement("div");
@@ -129,15 +137,15 @@ function taskDetailViewDate(projectName, taskIndex) {
   datePicker.appendChild(dateActionContainer);
 
   // Append the date picker to the popup container
-  popupContainer.appendChild(datePicker);
+  popUpContainerDate.appendChild(datePicker);
 
   // Append the 'Set Reminder' button and the popup container to the body
   const body = document.querySelector("body");
 
-  dateButtonContainer.append(openPopupButton);
-  addDateInTaskDetail(projectName, taskIndex);
+  dateContainer.append(openPopupButton);
+  addDateInTaskDetail(projectName, taskIndex, taskStatus);
 
-  body.append(popupContainer);
+  body.append(popUpContainerDate);
 
   addDateRelatedEventListener();
 }
@@ -147,7 +155,7 @@ function addDateRelatedEventListener() {
   const projectName = taskTitle.classList.item(1);
   const taskIndex = taskTitle.classList.item(2);
 
-  const popupContainer = document.querySelector("#popupContainer");
+  const popUpContainerDate = document.querySelector("#popUpContainerDate");
   const openPopupButton = document.querySelector("#openPopup");
   const closeButton = document.querySelector("#closePopup");
   const submitButton = document.getElementById("submitReminder");
@@ -156,25 +164,25 @@ function addDateRelatedEventListener() {
   const nextWeekButton = document.querySelector(".nextWeekButton");
   // const recurringButton = document.querySelector(".recurringButton");
 
-  popupContainer.addEventListener("click", (event) => {
-    if (event.target === popupContainer) {
-      popupContainer.classList.add("hidden");
+  popUpContainerDate.addEventListener("click", (event) => {
+    if (event.target === popUpContainerDate) {
+      popUpContainerDate.classList.add("hidden");
     }
   });
 
   openPopupButton.addEventListener("click", () => {
-    popupContainer.classList.remove("hidden");
+    popUpContainerDate.classList.remove("hidden");
   });
 
   closeButton.addEventListener("click", () => {
-    popupContainer.classList.add("hidden");
+    popUpContainerDate.classList.add("hidden");
   });
 
   submitButton.addEventListener("click", () => {
     const selectedDate = new Date(dateInput.value);
     if (!isNaN(selectedDate)) {
       projectFunctions.addDateToTask(projectName, taskIndex, selectedDate);
-      popupContainer.classList.add("hidden");
+      popUpContainerDate.classList.add("hidden");
       addDateInTaskDetail(projectName, taskIndex);
     }
   });
@@ -184,7 +192,7 @@ function addDateRelatedEventListener() {
     const Tomorrow = addDays(today, 1);
     projectFunctions.addDateToTask(projectName, taskIndex, Tomorrow);
 
-    popupContainer.classList.add("hidden");
+    popUpContainerDate.classList.add("hidden");
     addDateInTaskDetail(projectName, taskIndex);
   });
 
@@ -196,12 +204,12 @@ function addDateRelatedEventListener() {
     const nextWeek = addWeeks(today, 1);
     projectFunctions.addDateToTask(projectName, taskIndex, nextWeek);
 
-    popupContainer.classList.add("hidden");
+    popUpContainerDate.classList.add("hidden");
     addDateInTaskDetail(projectName, taskIndex);
   });
 }
 
-function taskDetailViewDescription(projectName, taskIndex) {
+function taskDetailViewDescription(projectName, taskIndex, taskStatus) {
   const descContainer = document.querySelector(".descContainer");
 
   const descLabel = elementMaker("label");
@@ -210,12 +218,19 @@ function taskDetailViewDescription(projectName, taskIndex) {
   const descInput = elementMaker("input");
   descInput.setAttribute("id", "notes");
 
-  if (projectFunctions.returnTaskDescription(projectName, taskIndex)) {
+  // if (projectFunctions.returnTaskDescription(projectName, taskIndex)) {
+  if (taskStatus === "complete") {
+    descInput.value = projectFunctions.returnTaskDescriptionOfCompletedTask(
+      projectName,
+      taskIndex
+    );
+  } else {
     descInput.value = projectFunctions.returnTaskDescription(
       projectName,
       taskIndex
     );
   }
+  // }
 
   descInput.addEventListener("blur", function (event) {
     const newValue = event.target.value;

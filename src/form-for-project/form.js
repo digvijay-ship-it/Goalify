@@ -3,8 +3,10 @@ import { fillSideBarMainProjectListContainer } from "../makeSideBar/sidebar";
 import "./form.css";
 
 function takeProjectNameFromUserForm() {
+  const projectFormContainer = elementMaker("div", "projectFormContainer");
+  projectFormContainer.classList.add("hidden");
+
   const projectFormDiv = elementMaker("div", "projectFormDiv");
-  projectFormDiv.classList.add("hidden");
 
   const projectFormLabel = elementMaker("label");
   projectFormLabel.setAttribute("for", "projectName");
@@ -21,7 +23,22 @@ function takeProjectNameFromUserForm() {
   buttonDiv.append(submitButton, cancelButton);
 
   projectFormDiv.append(projectFormLabel, projectFormInput, buttonDiv);
-  document.querySelector("body").append(projectFormDiv);
+  projectFormContainer.append(projectFormDiv);
+  document.querySelector("body").append(projectFormContainer);
+  addEventListenerForProjectForm();
+}
+
+function addEventListenerForProjectForm() {
+  document
+    .querySelector(".submitButton")
+    .addEventListener("click", enterProject);
+
+  document.querySelector(".cancelButton").addEventListener("click", () => {
+    const projectFormContainer = document.querySelector(
+      ".projectFormContainer"
+    );
+    projectFormContainer.classList.add("hidden");
+  });
 }
 
 function enterProject() {
@@ -31,8 +48,8 @@ function enterProject() {
     projectFunctions.appendNewProject(formInput.value);
   }
   formInput.value = "";
-  const projectFormDiv = document.querySelector(".projectFormDiv");
-  projectFormDiv.classList.toggle("hidden");
+  const projectFormContainer = document.querySelector(".projectFormContainer");
+  projectFormContainer.classList.add("hidden");
 
   fillSideBarMainProjectListContainer(
     projectFunctions.returnLatestProjectList()

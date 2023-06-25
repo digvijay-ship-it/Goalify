@@ -3,6 +3,7 @@ import {
   elementMaker,
   simpleSvgMaker,
   projectFunctions,
+  priorityTagsFunc,
 } from "../commonUtilities";
 
 import {
@@ -12,71 +13,233 @@ import {
   taskDetailViewDescription,
 } from "./taskDetailViewDependency";
 
-function showTaskDetailInUi(projectName, event) {
-  // make a window to display and edit task details
-  const previousSibling = event.target.previousElementSibling;
-  const taskIndex = previousSibling.classList.item(0);
-
-  const taskDetailsContainer = elementMaker("div", "taskDetailsContainer");
-
-  // // // enter header container with projectName and a button to close
-  const taskDetailHeaderContainer = tasKDetailViewHeader(projectName);
-
-  // // // container to edit title
-  const taskNameUpdate = tasKDetailViewTitle(
-    event.target.textContent,
-    projectName,
-    taskIndex
+function deleteExistingPriorityMultiSelectContainer() {
+  const priorityMultiSelectContainerChecker = document.querySelector(
+    ".priorityMultiSelectContainer"
   );
-
-  const dateContainer = elementMaker("div", "dateContainer");
-
-  // // // container to edit description
-  const descContainer = elementMaker("div", "descContainer");
-
-  // // // container to add subTask
-  const preSubTaskContainer = elementMaker("div", "preSubTaskContainer");
-
-  const preSubTaskDiv = elementMaker("div", "preSubTaskDiv");
-  const preCompletedSubTaskDiv = elementMaker("div", "preCompletedSubTaskDiv");
-
-  preSubTaskContainer.append(preSubTaskDiv, preCompletedSubTaskDiv);
-
-  const newTempSubTaskDiv = elementMaker("div", "newTempSubTaskDiv");
-
-  const subTaskContainer = elementMaker("div", "subTaskContainer");
-  const subTaskInput = elementMaker("input", "subTaskInput");
-
-  const plusIcon = simpleSvgMaker(
-    '<title>plus</title><path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />'
-  );
-  // add event Listener to subTaskDiv to create new subtask pair but check if last one has some value
-  subTaskInput.setAttribute("placeholder", "Add sub task");
-  subTaskInput.disabled = true;
-  subTaskContainer.append(plusIcon, subTaskInput);
-  subTaskContainer.addEventListener(
-    "click",
-    addTempSubTask.bind(this, projectName, taskIndex)
-  );
-  taskDetailsContainer.append(
-    taskDetailHeaderContainer,
-    taskNameUpdate,
-    dateContainer,
-    descContainer,
-    preSubTaskContainer,
-    newTempSubTaskDiv,
-    subTaskContainer
-  );
-
-  document.querySelector(".mainContainer").append(taskDetailsContainer);
-
-  // // // container to edit date, priority
-  taskDetailViewDate(projectName, taskIndex);
-  taskDetailViewDescription(projectName, taskIndex);
-
-  reloadCompleteSubTaskDiv(projectName, taskIndex);
-  reloadInCompleteSubTaskDiv(projectName, taskIndex);
+  if (priorityMultiSelectContainerChecker) {
+    priorityMultiSelectContainerChecker.remove();
+  }
 }
+
+function showTaskDetailInUi(projectName, event, element, taskStatus) {
+  // make a window to display and edit task details
+  const firstChild = element.querySelector(":first-child");
+  if (!(event.target === firstChild)) {
+    const taskIndex = firstChild.classList.item(0);
+
+    const taskDetailViewContainer = elementMaker(
+      "div",
+      "taskDetailViewContainer"
+    );
+
+    const taskDetailsContainer = elementMaker("div", "taskDetailsContainer");
+
+    if (taskStatus === "complete") {
+      taskDetailsContainer.classList.add("CompletedTask");
+    }
+
+    // // // enter header container with projectName and a button to close
+    const taskDetailHeaderContainer = tasKDetailViewHeader(projectName);
+
+    // // // container to edit title
+    const taskNameUpdate = tasKDetailViewTitle(
+      event.target.textContent,
+      projectName,
+      taskIndex
+    );
+
+    const TaskDetailButtonContainer = elementMaker(
+      "div",
+      "TaskDetailButtonContainer"
+    );
+
+    const dateContainer = elementMaker("div", "dateContainer");
+    const createPriorityContainerButton = elementMaker(
+      "button",
+      "createPriorityContainerButton"
+    );
+    createPriorityContainerButton.innerText = "Set priority";
+
+    createPriorityContainerButton.addEventListener("click", () => {
+      const mainContainer = document.querySelector(".mainContainer");
+
+      // delete the container if exit
+      deleteExistingPriorityMultiSelectContainer();
+
+      // make container
+      const priorityMultiSelectContainer = elementMaker(
+        "div",
+        "priorityMultiSelectContainer"
+      );
+      const priorityObj = priorityTagsFunc.returnLatestTagObject();
+      // // in that container one multiselect key as value and that Pair Value in in InnerText
+      const taskPriorityList = projectFunctions.returnTaskPriorityList(
+        projectName,
+        taskIndex
+      );
+
+      const tagContainer = elementMaker("div", "tagContainer");
+      const preTagContainer = elementMaker("div", "preTagContainer");
+      const nonPreTagContainer = elementMaker("div", "nonPreTagContainer");
+
+      // multiselect.multiple = true;
+      for (const [key, value] of priorityObj) {
+        // check if that key exist in that task object then make it checked
+        // if not than make it unmarked
+        if (taskPriorityList.includes(key)) {
+          const tagWrapper = elementMaker("div", "tagWrapper");
+          const checkbox = elementMaker("input");
+          checkbox.setAttribute("id", `${key}`); // Set the ID for the checkbox
+          checkbox.setAttribute("type", "checkbox");
+          checkbox.checked = true;
+          const label = elementMaker("label");
+          label.innerText = value;
+
+          tagWrapper.appendChild(checkbox);
+          tagWrapper.appendChild(label);
+          preTagContainer.append(tagWrapper);
+        } else {
+          const tagWrapper = elementMaker("div", "tagWrapper");
+          const checkbox = elementMaker("input");
+          checkbox.setAttribute("id", `${key}`); // Set the ID for the checkbox
+          checkbox.setAttribute("type", "checkbox");
+          const label = elementMaker("label");
+          label.innerText = value;
+
+          tagWrapper.appendChild(checkbox);
+          tagWrapper.appendChild(label);
+          nonPreTagContainer.append(tagWrapper);
+        }
+      }
+      // // Make Div To hold two button 1 submit and 2nd close
+      const priorityContainerButtons = elementMaker(
+        "div",
+        "priorityContainerButtons"
+      );
+      const priorityContainerSubmit = elementMaker(
+        "button",
+        "priorityContainerSubmit"
+      );
+      priorityContainerSubmit.innerText = "Submit";
+      priorityContainerSubmit.addEventListener("click", () => {
+        // check if any element is unchecked in preTagContainer
+        deleteTagFromTask(projectName, taskIndex);
+        // check if any element is checked in nonPreTagContainer
+        addTagToTask(projectName, taskIndex);
+        // delete priorityMultiSelectContainer element
+        priorityMultiSelectContainer.remove();
+      });
+
+      const priorityContainerClose = elementMaker(
+        "button",
+        "priorityContainerClose"
+      );
+      priorityContainerClose.innerText = "Close";
+      priorityContainerClose.addEventListener("click", () => {
+        // delete priorityMultiSelectContainer element
+        priorityMultiSelectContainer.remove();
+      });
+
+      priorityContainerButtons.append(
+        priorityContainerSubmit,
+        priorityContainerClose
+      );
+
+      tagContainer.append(preTagContainer, nonPreTagContainer);
+
+      priorityMultiSelectContainer.append(
+        tagContainer,
+        priorityContainerButtons
+      );
+      mainContainer.append(priorityMultiSelectContainer);
+    });
+
+    TaskDetailButtonContainer.append(
+      dateContainer,
+      createPriorityContainerButton
+    );
+
+    // // // container to edit description
+    const descContainer = elementMaker("div", "descContainer");
+
+    // // // container to add subTask
+    const preSubTaskContainer = elementMaker("div", "preSubTaskContainer");
+
+    const preSubTaskDiv = elementMaker("div", "preSubTaskDiv");
+    const preCompletedSubTaskDiv = elementMaker(
+      "div",
+      "preCompletedSubTaskDiv"
+    );
+
+    preSubTaskContainer.append(preSubTaskDiv, preCompletedSubTaskDiv);
+
+    const newTempSubTaskDiv = elementMaker("div", "newTempSubTaskDiv");
+
+    const subTaskContainer = elementMaker("div", "subTaskContainer");
+    const subTaskInput = elementMaker("input", "subTaskInput");
+
+    const plusIcon = simpleSvgMaker(
+      '<title>plus</title><path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />'
+    );
+    // add event Listener to subTaskDiv to create new subtask pair but check if last one has some value
+    subTaskInput.setAttribute("placeholder", "Add sub task");
+    subTaskInput.disabled = true;
+    subTaskContainer.append(plusIcon, subTaskInput);
+    subTaskContainer.addEventListener(
+      "click",
+      addTempSubTask.bind(this, projectName, taskIndex)
+    );
+    taskDetailsContainer.append(
+      taskDetailHeaderContainer,
+      taskNameUpdate,
+      TaskDetailButtonContainer,
+      descContainer,
+      preSubTaskContainer,
+      newTempSubTaskDiv,
+      subTaskContainer
+    );
+
+    taskDetailViewContainer.append(taskDetailsContainer);
+
+    document.querySelector(".mainContainer").append(taskDetailViewContainer);
+
+    // // // container to edit date, priority
+    taskDetailViewDate(projectName, taskIndex, taskStatus);
+    taskDetailViewDescription(projectName, taskIndex, taskStatus);
+
+    reloadCompleteSubTaskDiv(projectName, taskIndex, taskStatus);
+    reloadInCompleteSubTaskDiv(projectName, taskIndex, taskStatus);
+
+    function deleteTagFromTask(projectName, taskIndex) {
+      const tagSelectedInputList = document.querySelectorAll(
+        ".preTagContainer .tagWrapper"
+      );
+      for (let index = 0; index < tagSelectedInputList.length; index++) {
+        if (!tagSelectedInputList[index].querySelector("input").checked) {
+          const id = tagSelectedInputList[index]
+            .querySelector("input")
+            .getAttribute("id");
+          projectFunctions.deleteTagFromTaskList(projectName, taskIndex, id);
+        }
+      }
+    }
+    function addTagToTask(projectName, taskIndex) {
+      const tagNonSelectedInputList = document.querySelectorAll(
+        ".nonPreTagContainer .tagWrapper"
+      );
+      for (let index = 0; index < tagNonSelectedInputList.length; index++) {
+        if (tagNonSelectedInputList[index].querySelector("input").checked) {
+          const id = tagNonSelectedInputList[index]
+            .querySelector("input")
+            .getAttribute("id");
+          projectFunctions.addTagToTaskList(projectName, taskIndex, id);
+        }
+      }
+    }
+  }
+}
+
 function addTempSubTask(projectName, taskIndex) {
   // check if last childSubTaskDiv' input element one has some value
   const newTempSubTaskDiv = document.querySelector(".newTempSubTaskDiv");
@@ -107,13 +270,18 @@ function addTempSubTask(projectName, taskIndex) {
   }
 }
 
-function reloadInCompleteSubTaskDiv(projectName, taskIndex) {
+function reloadInCompleteSubTaskDiv(projectName, taskIndex, taskStatus) {
   const preSubTaskDiv = document.querySelector(".preSubTaskDiv");
   preSubTaskDiv.innerText = "";
-  const subTaskList = projectFunctions.returnSubtaskList(
-    projectName,
-    taskIndex
-  );
+  let subTaskList;
+  if (taskStatus === "complete") {
+    subTaskList = projectFunctions.returnSubtaskListOfCompletedTask(
+      projectName,
+      taskIndex
+    );
+  } else {
+    subTaskList = projectFunctions.returnSubtaskList(projectName, taskIndex);
+  }
   for (let index = 0; index < subTaskList.length; index++) {
     const wrapper = subTaskMaker(
       projectName,
@@ -152,13 +320,21 @@ function reloadInCompleteSubTaskDiv(projectName, taskIndex) {
   }
 }
 
-function reloadCompleteSubTaskDiv(projectName, taskIndex) {
+function reloadCompleteSubTaskDiv(projectName, taskIndex, taskStatus) {
   const preSubTaskDiv = document.querySelector(".preCompletedSubTaskDiv");
   preSubTaskDiv.innerText = "";
-  const subTaskList = projectFunctions.returnCompleteSubtaskList(
-    projectName,
-    taskIndex
-  );
+  let subTaskList;
+  if (taskStatus === "complete") {
+    subTaskList = projectFunctions.returnCompleteSubtaskListOfCompletedTask(
+      projectName,
+      taskIndex
+    );
+  } else {
+    subTaskList = projectFunctions.returnCompleteSubtaskList(
+      projectName,
+      taskIndex
+    );
+  }
   for (let index = 0; index < subTaskList.length; index++) {
     //
     const wrapper = subTaskMaker(

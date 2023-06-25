@@ -6,10 +6,7 @@ import {
   projectFunctions,
   clearMainContainer,
 } from "./commonUtilities";
-import {
-  takeProjectNameFromUserForm,
-  enterProject,
-} from "./form-for-project/form";
+import { takeProjectNameFromUserForm } from "./form-for-project/form";
 import {
   makeTaskListContainerHeader,
   makeTaskListContainer,
@@ -22,15 +19,8 @@ let mainContainer = elementMaker("div", "mainContainer");
 document.querySelector("body").append(mainContainer);
 
 document.querySelector(".addProjectIcon").addEventListener("click", () => {
-  const projectFormDiv = document.querySelector(".projectFormDiv");
-  projectFormDiv.classList.toggle("hidden");
-});
-
-document.querySelector(".submitButton").addEventListener("click", enterProject);
-
-document.querySelector(".cancelButton").addEventListener("click", () => {
-  const projectFormDiv = document.querySelector(".projectFormDiv");
-  projectFormDiv.classList.toggle("hidden");
+  const projectFormDiv = document.querySelector(".projectFormContainer");
+  projectFormDiv.classList.remove("hidden");
 });
 
 document.querySelector(".To-Do").addEventListener("click", () => {

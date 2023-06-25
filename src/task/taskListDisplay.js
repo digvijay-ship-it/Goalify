@@ -3,7 +3,10 @@ import {
   projectFunctions,
   elementMaker,
   simpleSvgMaker,
+  priorityTagsFunc,
 } from "../commonUtilities";
+import { format } from "date-fns";
+
 import { showTaskDetailInUi } from "./taskIndividualDisplay.js";
 
 function makeTaskListContainerHeader(projectName) {
@@ -104,6 +107,25 @@ function taskListContainerFunc(project) {
     const projectObject = project.returnLatestCompletedProjectList();
     return projectObject[projectName];
   }
+
+  function fillTaskTags(taskPriorityList) {
+    const tagListFieldset = elementMaker("fieldset", "tagListFieldset");
+    const tagListLegend = elementMaker("legend", "tagListLegend");
+    tagListLegend.innerText = "Tags";
+
+    const tagObj = priorityTagsFunc.returnLatestTagObject();
+    // based on this list
+    for (let index = 0; index < taskPriorityList.length; index++) {
+      if (tagObj.has(taskPriorityList[index])) {
+        const tagLabel = elementMaker("label");
+        tagLabel.innerText = tagObj.get(taskPriorityList[index]) + ", ";
+        tagListFieldset.append(tagLabel);
+      }
+    }
+    tagListFieldset.append(tagListLegend);
+    return tagListFieldset;
+  }
+
   function fillInCompleteTaskListContainer(projectName) {
     const taskList = returnTaskListFromProject(projectName);
     resetInCompleteTaskListContainer();
@@ -113,13 +135,34 @@ function taskListContainerFunc(project) {
     for (let i = 0; i < taskList.length; i++) {
       const taskDiv = elementMaker("div", "taskDiv");
 
-      const taskElement = elementMaker("p", "taskTitle");
-      taskElement.innerText = taskList[i].title;
+      const taskTitle = elementMaker("p", "taskTitle");
+      taskTitle.innerText = taskList[i].title;
 
-      taskElement.addEventListener(
-        "click",
-        showTaskDetailInUi.bind(null, projectName)
+      // taskOtherDetailContainer
+      const taskOtherDetailContainer = elementMaker(
+        "div",
+        "taskOtherDetailContainer"
       );
+
+      const taskTagContainer = elementMaker("div", "taskTagContainer");
+      const taskPriorityList = projectFunctions.returnTaskPriorityList(
+        projectName,
+        i
+      );
+      taskTagContainer.append(fillTaskTags(taskPriorityList));
+
+      const taskDateContainer = elementMaker("div", "taskDateContainer");
+      const taskDate = projectFunctions.returnTaskDate(projectName, i);
+      if (taskDate) {
+        taskDateContainer.innerText = format(taskDate, "dd/MM/yyyy");
+      }
+
+      taskOtherDetailContainer.append(taskTagContainer, taskDateContainer);
+
+      taskDiv.addEventListener("click", function (event) {
+        deletePreviousPopUpContainerDate();
+        showTaskDetailInUi(projectName, event, this);
+      });
 
       const taskCheckBox = elementMaker("input", `${i}`);
       taskCheckBox.classList.add(projectName);
@@ -134,7 +177,7 @@ function taskListContainerFunc(project) {
         taskDiv.remove();
         fillCompleteTaskListContainer(projectName);
       });
-      taskDiv.append(taskCheckBox, taskElement);
+      taskDiv.append(taskCheckBox, taskTitle, taskOtherDetailContainer);
       taskListContainer.append(taskDiv);
     }
   }
@@ -147,9 +190,38 @@ function taskListContainerFunc(project) {
     resetCompleteTaskListContainer();
     for (let i = 0; i < completeTaskList.length; i++) {
       const taskDiv = elementMaker("div", "taskDiv");
-      const taskElement = elementMaker("p");
 
-      taskElement.innerText = completeTaskList[i].title;
+      const taskTitle = elementMaker("p", "taskTitle");
+      taskTitle.innerText = completeTaskList[i].title;
+
+      // taskOtherDetailContainer
+      const taskOtherDetailContainer = elementMaker(
+        "div",
+        "taskOtherDetailContainer"
+      );
+
+      const taskTagContainer = elementMaker("div", "taskTagContainer");
+
+      const completeTaskPriorityList =
+        projectFunctions.returnCompletedTaskPriorityList(projectName, i);
+
+      taskTagContainer.append(fillTaskTags(completeTaskPriorityList));
+
+      const taskDateContainer = elementMaker("div", "taskDateContainer");
+      const taskDate = projectFunctions.returnTaskDateOfCompleteTask(
+        projectName,
+        i
+      );
+      if (taskDate) {
+        taskDateContainer.innerText = format(taskDate, "dd/MM/yyyy");
+      }
+
+      taskOtherDetailContainer.append(taskTagContainer, taskDateContainer);
+
+      taskDiv.addEventListener("click", function (event) {
+        deletePreviousPopUpContainerDate();
+        showTaskDetailInUi(projectName, event, this, "complete");
+      });
 
       const taskCheckBox = elementMaker("input", `${i}`);
       taskCheckBox.classList.add(projectName);
@@ -161,14 +233,13 @@ function taskListContainerFunc(project) {
           projectName,
           i
         );
-        taskElement.addEventListener("click", () => {
+        taskTitle.addEventListener("click", () => {
           // make a window to display task details
         });
         taskDiv.remove();
         fillInCompleteTaskListContainer(projectName);
       });
-
-      taskDiv.append(taskCheckBox, taskElement);
+      taskDiv.append(taskCheckBox, taskTitle, taskOtherDetailContainer);
       completedTaskContainer.append(taskDiv);
     }
   }
@@ -180,6 +251,13 @@ function taskListContainerFunc(project) {
     fillCompleteTaskListContainer,
     returnInCompleteTaskListBasedOnProject,
   };
+}
+
+function deletePreviousPopUpContainerDate() {
+  const popUpContainerDate = document.querySelector("#popUpContainerDate");
+  if (popUpContainerDate) {
+    popUpContainerDate.remove();
+  }
 }
 
 const taskListContainerFuncs = taskListContainerFunc(projectFunctions);
