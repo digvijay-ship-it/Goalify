@@ -23,41 +23,61 @@ function taskObjFactoryFunction(title, notes = "", dueDate = "") {
 }
 
 function priorityTags() {
-  const tagObject = new Map();
+  let tagObject = new Map();
   tagObject.set(0, "Important");
   tagObject.set(1, "Work");
   tagObject.set(2, "Urgent");
   tagObject.set(3, "Priority");
   tagObject.set(4, "Family");
+
   const appendNewTag = (indexNumber, newTag) => {
     tagObject.set(indexNumber, newTag);
+    getAssetsToLocal();
   };
-  const returnLatestTagObject = () => tagObject;
+  const returnLatestTagObject = () => {
+    return tagObject;
+  };
+
+  const setTagObject = (newTagObject) => {
+    tagObject = newTagObject;
+  };
+
   const deleteOneTagObjectProperty = (propertyName) => {
-    const propertyNameInt = parseInt(propertyName, 10);
+    const propertyNameInt = parseInt(propertyName);
     tagObject.delete(propertyNameInt);
+    getAssetsToLocal();
   };
   return {
     appendNewTag,
     returnLatestTagObject,
     deleteOneTagObjectProperty,
+    setTagObject,
   };
 }
 
 function projectList() {
-  const projectList = { default: [] };
-  const completedProjectList = { default: [] };
+  let projectList = { default: [] };
+  let completedProjectList = { default: [] };
 
   const appendNewProject = (newProjectName) => {
     projectList[newProjectName] = [];
     completedProjectList[newProjectName] = [];
+    getAssetsToLocal();
   };
   const returnLatestProjectList = () => projectList;
-  const appendNewObj = (projectName, taskObj) => {
+  const setLatestProjectList = (newProjectList) => {
+    projectList = newProjectList;
+  };
+
+  const appendNewTaskObj = (projectName, taskObj) => {
     projectList[projectName].push(taskObj);
+    getAssetsToLocal();
   };
 
   const returnLatestCompletedProjectList = () => completedProjectList;
+  const setLatestCompletedProjectList = (newCompletedProjectList) => {
+    completedProjectList = newCompletedProjectList;
+  };
   const appendFromProjectListToCompleteProjectList = (
     projectName,
     taskIndex
@@ -67,6 +87,7 @@ function projectList() {
     completedProjectList[projectName].push(
       projectList[projectName].splice(taskIndex, 1)[0]
     );
+    getAssetsToLocal();
   };
   const appendFromCompleteProjectListToProjectList = (
     projectName,
@@ -75,12 +96,17 @@ function projectList() {
     projectList[projectName].push(
       completedProjectList[projectName].splice(taskIndex, 1)[0]
     );
+    getAssetsToLocal();
   };
+
   const clearCompletedProject = (projectName) => {
     completedProjectList[projectName] = [];
+    getAssetsToLocal();
   };
+
   const addSubTaskToTask = (projectName, taskIndex, subTask) => {
     projectList[projectName][taskIndex].subTaskList.push(subTask);
+    getAssetsToLocal();
   };
 
   const returnSubtaskList = (projectName, taskIndex) => {
@@ -99,14 +125,17 @@ function projectList() {
 
   const updateSubTask = (projectName, taskIndex, subTaskIndex, subTask) => {
     projectList[projectName][taskIndex].subTaskList[subTaskIndex] = subTask;
+    getAssetsToLocal();
   };
 
   const updateTaskTitle = (projectName, taskIndex, newTitle) => {
     projectList[projectName][taskIndex].title = newTitle;
+    getAssetsToLocal();
   };
 
   const updateTaskDescription = (projectName, taskIndex, desc) => {
     projectList[projectName][taskIndex].notes = desc;
+    getAssetsToLocal();
   };
 
   const returnTaskDescription = (projectName, taskIndex) => {
@@ -127,6 +156,7 @@ function projectList() {
 
   const addDateToTask = (projectName, taskIndex, date) => {
     projectList[projectName][taskIndex].dueDate = date;
+    getAssetsToLocal();
   };
 
   const insertFromSubtaskListToCompletedSubTaskList = (
@@ -137,6 +167,7 @@ function projectList() {
     projectList[projectName][taskIndex].completeSubTaskList.push(
       projectList[projectName][taskIndex].subTaskList.splice(subTaskIndex, 1)[0]
     );
+    getAssetsToLocal();
   };
 
   const insertFromCompleteSubtaskListToSubTaskList = (
@@ -150,6 +181,7 @@ function projectList() {
         1
       )[0]
     );
+    getAssetsToLocal();
   };
 
   const returnTaskDate = (projectName, taskIndex) => {
@@ -170,15 +202,19 @@ function projectList() {
         1
       );
     }
+    getAssetsToLocal();
   };
   const addTagToTaskList = (projectName, taskIndex, id) => {
     projectList[projectName][taskIndex].priorityList.push(parseInt(id));
+    getAssetsToLocal();
   };
 
   return {
+    setLatestProjectList,
+    setLatestCompletedProjectList,
     appendNewProject,
     returnLatestProjectList,
-    appendNewObj,
+    appendNewTaskObj,
     returnLatestCompletedProjectList,
     appendFromProjectListToCompleteProjectList,
     appendFromCompleteProjectListToProjectList,
@@ -212,8 +248,77 @@ function simpleSvgMaker(svgInternal, className = "") {
   return svg;
 }
 
+function storageAvailable(type) {
+  let storage;
+  try {
+    storage = window[type];
+    const x = "__storage_test__";
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return storage;
+  } catch (e) {
+    return (
+      e instanceof DOMException &&
+      // everything except Firefox
+      (e.code === 22 ||
+        // Firefox
+        e.code === 1014 ||
+        // test name field too, because code might not be present
+        // everything except Firefox
+        e.name === "QuotaExceededError" ||
+        // Firefox
+        e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+      // acknowledge QuotaExceededError only if there's something already stored
+      storage &&
+      storage.length !== 0
+    );
+  }
+}
+
 const priorityTagsFunc = priorityTags();
 const projectFunctions = projectList();
+
+if (storageAvailable("localStorage")) {
+  if (window.localStorage && Object.keys(window.localStorage).length > 0) {
+    storeAssetsFromLocal();
+  } // then reassign back to the respected
+  else {
+    getAssetsToLocal();
+  }
+}
+
+function storeAssetsFromLocal() {
+  const originalPriorityObj = new Map(
+    JSON.parse(localStorage.getItem("priorityObj"))
+  );
+
+  priorityTagsFunc.setTagObject(originalPriorityObj);
+  projectFunctions.setLatestProjectList(
+    JSON.parse(localStorage.getItem("projectObject"))
+  );
+  projectFunctions.setLatestCompletedProjectList(
+    JSON.parse(localStorage.getItem("completedProjectObject"))
+  );
+}
+
+function getAssetsToLocal() {
+  // then make a function to save projectList, completedProjectList, tagObject
+  const projectObject = JSON.stringify(
+    projectFunctions.returnLatestProjectList()
+  );
+  const completedProjectObject = JSON.stringify(
+    projectFunctions.returnLatestCompletedProjectList()
+  );
+
+  const priorityObj = JSON.stringify([
+    ...priorityTagsFunc.returnLatestTagObject(),
+  ]);
+
+  localStorage.setItem("projectObject", projectObject);
+  localStorage.setItem("completedProjectObject", completedProjectObject);
+  localStorage.setItem("priorityObj", priorityObj);
+}
+
 export {
   elementMaker,
   priorityTagsFunc,

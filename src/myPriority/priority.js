@@ -46,8 +46,9 @@ function makeTagHeaderButtonContainer() {
       // to check if all first child element which are checked
       for (let index = 0; index < tagWrappers.length; index++) {
         if (tagWrappers[index].firstChild.checked) {
-          const propertyName = tagWrappers[index].firstChild.classList.item(0);
-          priorityTagsFunc.deleteOneTagObjectProperty(propertyName);
+          const priorityTagKey =
+            tagWrappers[index].firstChild.classList.item(0);
+          priorityTagsFunc.deleteOneTagObjectProperty(priorityTagKey);
         }
       }
       refreshTagsContainer();

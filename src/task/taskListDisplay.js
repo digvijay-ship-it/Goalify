@@ -84,7 +84,7 @@ function makeInputElementForTaskList(projectName) {
       const projectName = this.id;
 
       const newTaskObj = taskObjFactoryFunction(taskTitle);
-      projectFunctions.appendNewObj(projectName, newTaskObj);
+      projectFunctions.appendNewTaskObj(projectName, newTaskObj);
 
       document.querySelector(".taskTitleInput").value = ""; // Reset the input field by assigning an empty string to its value
 
@@ -279,7 +279,6 @@ function deletePreviousPopUpContainerDate() {
 }
 
 function makeTaskListView(projectName) {
-  console.log("hit");
   clearMainContainer();
 
   makeTaskListContainerHeader(projectName);
