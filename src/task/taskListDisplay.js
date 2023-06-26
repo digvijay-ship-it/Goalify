@@ -77,6 +77,22 @@ function makeInputElementForTaskList(projectName) {
     '<title>upload</title><path d="M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z" />'
   );
   inputButton.append(uploadSvg);
+
+  inputButton.addEventListener("click", function () {
+    const taskTitle = document.querySelector(".taskTitleInput").value;
+    if (taskTitle) {
+      const projectName = this.id;
+
+      const newTaskObj = taskObjFactoryFunction(taskTitle);
+      projectFunctions.appendNewObj(projectName, newTaskObj);
+
+      document.querySelector(".taskTitleInput").value = ""; // Reset the input field by assigning an empty string to its value
+
+      taskListContainerFuncs.fillInCompleteTaskListContainer(projectName);
+      taskListContainerFuncs.fillCompleteTaskListContainer(projectName);
+    }
+  });
+
   return [inputElement, inputButton];
 }
 
@@ -271,21 +287,6 @@ function makeTaskListView(projectName) {
 
   taskListContainerFuncs.fillInCompleteTaskListContainer(projectName);
   taskListContainerFuncs.fillCompleteTaskListContainer(projectName);
-
-  document.querySelector(".inputButton").addEventListener("click", function () {
-    const taskTitle = document.querySelector(".taskTitleInput").value;
-    if (taskTitle) {
-      const projectName = this.id;
-
-      const newTaskObj = taskObjFactoryFunction(taskTitle);
-      projectFunctions.appendNewObj(projectName, newTaskObj);
-
-      document.querySelector(".taskTitleInput").value = ""; // Reset the input field by assigning an empty string to its value
-
-      taskListContainerFuncs.fillInCompleteTaskListContainer(projectName);
-      taskListContainerFuncs.fillCompleteTaskListContainer(projectName);
-    }
-  });
 }
 
 const taskListContainerFuncs = taskListContainerFunc(projectFunctions);

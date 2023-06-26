@@ -18,7 +18,7 @@ function taskObjFactoryFunction(title, notes = "", dueDate = "") {
     dueDate,
     subTaskList: [],
     completeSubTaskList: [],
-    priorityList: [0],
+    priorityList: [],
   };
 }
 

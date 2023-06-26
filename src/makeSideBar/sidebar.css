@@ -71,10 +71,3 @@ svg {
   display: flex;
   flex-direction: column;
 }
-
-.mainContainer {
-  display: grid;
-  grid-template-rows: 1fr 7fr;
-  grid-row: 1/-1;
-  grid-column: 2/-1;
-}
